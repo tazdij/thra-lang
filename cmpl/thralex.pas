@@ -13,9 +13,14 @@ type
         ELexIdent,
         ELexLParen, ELexRParen,
         ELexComment,
+        ELexMultiComment,
         ELexSemiColon,
 
-        ELexNumber,
+        ELexInt,
+        ELexFloat,
+        ELexHexInt,
+        ELexBinInt,
+        ELexOctInt,
         ELexString,
 
         ELexMacro);
@@ -53,6 +58,15 @@ var
     // CharList : Array[0..1] of AnsiString = ('a', '四');
     ValidNumberCL : Array[0..10] of AnsiString = ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.');
     DigitCL : Array[0..9] of AnsiString = ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
+    StartDecimalCL : Array[0..8] of AnsiString = ('1', '2', '3', '4', '5', '6', '7', '8', '9');
+    BinDigitCL : Array[0..1] of AnsiString = ('0', '1');
+    OctDigitCL : Array[0..7] of AnsiString = ('0', '1', '2', '3', '4', '5', '6', '7');
+
+    HexDigitCL : Array[0..21] of AnsiString = (
+        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+        'A', 'B', 'C', 'D', 'E', 'F', 'a', 'b', 'c', 'd',
+        'e', 'f');
+
     LowerAlphaCL : Array[0..25] of AnsiString = (
         'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 
         'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 
@@ -63,29 +77,33 @@ var
         'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 
         'U', 'V', 'W', 'X', 'Y', 'Z');
 
-    AtomCL : Array[0..67] of AnsiString = (
+    IdentStartCL : Array[0..26] of AnsiString = (
         'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
         'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
-        'u', 'v', 'w', 'x', 'y', 'z',
-        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
-        'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
-        'U', 'V', 'W', 'X', 'Y', 'Z',
-        '-', '+', '=', '>', '<', '''', ':', '@', '#', '$',
-        '%', '^', '&', '*', '!', '~');
+        'u', 'v', 'w', 'x', 'y', 'z', '_');
 
     WhitespaceCL : Array[0..3] of AnsiString = (#13, #10, #7, #32);
     StringEscapeCL : Array[0..1] of AnsiString = ('\', '"');
+
+    IdentCLs : Array[0..1] of TDFAComparator;
 
 
 constructor TLexer.Create();
 var
     StartState, WhitespaceState,
-    CommentState, CommentEndState,
-    AtomState, AtomEndState,
+    CommentStartState,
+    CommentMultiLineState, CommentMultiLineEndingState, CommentMultiLineEndState,
+    CommentSingleLineState, CommentEndState,
+    IdentState, IdentEndState,
     LParenState, //LParenEndState,
     RParenState, //RParenEndState,
+
     StringState, StringEscapeState, StringEndState,
-    NumberState, NumberDecimalState, NumberEndState : TDFAState;
+
+    IntState, FloatState, IntEndState, FloatEndState,
+
+
+    SemiColonState : TDFAState;
 
 begin
     self.FCurLine := 1;
@@ -101,11 +119,15 @@ begin
     StartState := TDFAState.Create('START', 'START', Integer(ELexNone));
     WhitespaceState := TDFAState.Create('WHITESPACE', 'WS', Integer(ELexNone));
 
-    CommentState := TDFAState.Create('COMMENT', 'CMNT', Integer(ELexComment));
+    CommentStartState := TDFAState.Create('COMMENT', 'CMNT', Integer(ELexComment));
+    CommentMultiLineState := TDFAState.Create('MULTICOMMENT', 'MCMNT', Integer(ELexMultiComment));
+    CommentMultiLineEndingState := TDFAState.Create('MULTICOMMENT', 'MCMNT', Integer(ELexMultiComment));
+    CommentMultiLineEndState := TDFAState.Create('MULTICOMMENT', 'MCMNT', Integer(ELexMultiComment));
+    CommentSingleLineState := TDFAState.Create('COMMENT', 'CMNT', Integer(ELexComment));
     CommentEndState := TDFAState.Create('COMMENT', 'CMNT', Integer(ELexComment));
 
-    AtomState := TDFAState.Create('ATOM', 'ATOM', Integer(ELexAtom));
-    AtomEndState := TDFAState.Create('ATOM', 'ATOM', Integer(ELexAtom));
+    IdentState := TDFAState.Create('IDENT', 'IDENT', Integer(ELexIdent));
+    IdentEndState := TDFAState.Create('IDENT', 'IDENT', Integer(ELexIdent));
 
     LParenState := TDFAState.Create('LPAREN', 'LPAREN', Integer(ELexLParen));
     //LParenEndState := TDFAState.Create('LPAREN', 'LPAREN', Integer(ELexLParen));
@@ -113,23 +135,30 @@ begin
     RParenState := TDFAState.Create('RPAREN', 'RPAREN', Integer(ELexRParen));
     //RParenEndState := TDFAState.Create('RPAREN', 'RPAREN', Integer(ELexRParen));
 
+    SemiColonState := TDFAState.Create('SEMICOLON', 'SEMICOLON', Integer(ELexSemiColon));
+
 
     StringState := TDFAState.Create('STRING', 'STRING', Integer(ELexString));
     StringEscapeState := TDFAState.Create('STRINGESCAPE', 'STRING', Integer(ELexString));
     StringEndState := TDFAState.Create('STRING', 'STRING', Integer(ELexString));
 
-    NumberDecimalState := TDFAState.Create('NUMBER', 'NUMBER', Integer(ELexNumber));
-    NumberState := TDFAState.Create('NUMBER', 'NUMBER', Integer(ELexNumber));
-    NumberEndState := TDFAState.Create('NUMBER', 'NUMBER', Integer(ELexNumber));
+    IntState := TDFAState.Create('INT', 'INT', Integer(ELexInt));
+    IntEndState := TDFAState.Create('INT', 'INT', Integer(ELexInt));
+    FloatState := TDFAState.Create('FLOAT', 'FLOAT', Integer(ELexFloat));
+    FloatEndState := TDFAState.Create('FLOAT', 'FLOAT', Integer(ELexFloat));
 
 
-    FDfa.addState(StartState); (* Must add the First "Start" State, before all others *)
-    FDfa.addState(WhitespaceState);
-    FDfa.addState(CommentState);
-    Fdfa.AddState(CommentEndState);
+    FDfa.AddState(StartState); (* Must add the First "Start" State, before all others *)
+    FDfa.AddState(WhitespaceState);
+    FDfa.AddState(CommentStartState);
+    FDfa.AddState(CommentMultiLineState);
+    FDfa.AddState(CommentMultiLineEndingState);
+    FDfa.AddState(CommentMultiLineEndState);
+    FDfa.AddState(CommentSingleLineState);
+    FDfa.AddState(CommentEndState);
 
-    FDfa.addState(AtomState);
-    FDfa.addState(AtomEndState);
+    FDfa.AddState(IdentState);
+    FDfa.AddState(IdentEndState);
 
     FDfa.addState(LParenState);
     //FDfa.AddState(LParenEndState);
@@ -137,22 +166,33 @@ begin
     FDfa.addState(RParenState);
     //FDfa.AddState(RParenEndState);
 
+    FDfa.addState(SemiColonState);
+
     FDfa.addState(StringState);
     FDfa.addState(StringEscapeState);
     FDfa.AddState(StringEndState);
 
-    FDfa.AddState(NumberState);
-    FDfa.AddState(NumberDecimalState);
-    FDfa.AddState(NumberEndState);
+    FDfa.AddState(IntState);
+    FDfa.AddState(IntEndState);
+    FDfa.AddState(FloatState);
+    FDfa.AddState(FloatEndState);
 
 
     (* Loop whitespace back to start, we don't care about it *)
     StartState.AddDelta(TDFADelta.Create(TDFAComp_IsIn.Create(WhitespaceCL), StartState, False));
 
     (* Handle comments *)
-    StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create(';'), CommentState, False));
-    CommentState.AddDelta(TDFADelta.Create(TDFAComp_IsNot.Create(#10), CommentState));
-    CommentState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create(#10), CommentEndState, False));
+    StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('/'), CommentStartState, False));
+    CommentStartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('/'), CommentSingleLineState, False));
+    CommentStartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('*'), CommentMultiLineState, False));
+    CommentSingleLineState.AddDelta(TDFADelta.Create(TDFAComp_IsNot.Create(#10), CommentSingleLineState));
+    CommentSingleLineState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create(#10), CommentEndState, False));
+    CommentMultiLineState.AddDelta(TDFADelta.Create(TDFAComp_IsNot.Create('*'), CommentMultiLineState));
+    CommentMultiLineState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('*'), CommentMultiLineEndingState));
+    CommentMultiLineEndingState.AddDelta(TDFADelta.Create(TDFAComp_IsNot.Create('/'), CommentMultiLineState));
+    CommentMultiLineEndingState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('/'), CommentMultiLineEndState, False));
+    // All MultiComments have a trailing * to cleanup at some stage
+
 
     (* Handle LParen *)
     StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('('), LParenState));
@@ -161,11 +201,14 @@ begin
     (* Handle RParen *)
     StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create(')'), RParenState));
 
-    (* Handle Atom *)
-    StartState.AddDelta(TDFADelta.Create(TDFAComp_IsIn.Create(AtomCL), AtomState));
-    AtomState.AddDelta(TDFADelta.Create(TDFAComp_IsIn.Create(AtomCL), AtomState));
-    AtomState.AddDelta(TDFADelta.Create(TDFAComp_IsIn.Create(DigitCL), AtomState));
-    AtomState.AddDelta(TDFADelta.Create(TDFAComp_IsNotIn.Create(AtomCL), AtomEndState, False, True));
+    (* Handle SemiColon *)
+    StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create(';'), SemiColonState));
+
+    (* Handle IdentStart *)
+    StartState.AddDelta(TDFADelta.Create(TDFAComp_IsIn.Create(IdentStartCL), IdentState));
+    IdentState.AddDelta(TDFADelta.Create(TDFAComp_IsIn.Create(IdentStartCL), IdentState));
+    IdentState.AddDelta(TDFADelta.Create(TDFAComp_IsIn.Create(DigitCL), IdentState));
+    IdentState.AddDelta(TDFADelta.Create(TDFAComp_And.Create(IdentCLs), IdentEndState, False, True));
 
     (* Handle String *)
     StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('"'), StringState, False));
@@ -176,14 +219,14 @@ begin
 
 
 
-    (* Handle Numbers *)
-    StartState.AddDelta(TDFADelta.Create(TDFAComp_IsIn.Create(DigitCL), NumberState));
-    NumberState.AddDelta(TDFADelta.Create(TDFAComp_IsIn.Create(DigitCL), NumberState));
-    NumberState.AddDelta(TDFADelta.Create(TDFAComp_IsNotIn.Create(ValidNumberCL), NumberEndState, False, True));
-    StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('.'), NumberDecimalState)); // Skip to the Decimal Right away
-    NumberState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('.'), NumberDecimalState)); // Transition to Decimal
-    NumberDecimalState.AddDelta(TDFADelta.Create(TDFAComp_IsIn.Create(DigitCL), NumberDecimalState));
-    NumberDecimalState.AddDelta(TDFADelta.Create(TDFAComp_IsNotIn.Create(DigitCL), NumberEndState, False, True));
+    (* Handle Decimal Int or Float *)
+    StartState.AddDelta(TDFADelta.Create(TDFAComp_IsIn.Create(StartDecimalCL), IntState));
+    IntState.AddDelta(TDFADelta.Create(TDFAComp_IsIn.Create(DigitCL), IntState));
+    IntState.AddDelta(TDFADelta.Create(TDFAComp_IsNotIn.Create(ValidNumberCL), IntEndState, False, True));
+    StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('.'), FloatState)); // Skip to the Decimal Right away
+    IntState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('.'), FloatState)); // Transition to Decimal
+    FloatState.AddDelta(TDFADelta.Create(TDFAComp_IsIn.Create(DigitCL), FloatState));
+    FloatState.AddDelta(TDFADelta.Create(TDFAComp_IsNotIn.Create(DigitCL), FloatEndState, False, True));
 
     
 end;
@@ -264,5 +307,15 @@ begin
     Result := self.FTokenList;
 
 end;
+
+initialization
+
+IdentCLs[0] := TDFAComp_IsNotIn.Create(IdentStartCL);
+IdentCLs[1] := TDFAComp_IsNotIn.Create(DigitCL);
+
+finalization
+
+FreeAndNil(IdentCLs[0]);
+FreeAndNil(IdentCLs[1]);
 
 end.

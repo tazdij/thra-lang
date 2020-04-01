@@ -3,10 +3,6 @@ program thra_0;
 // Single line comment..
 import "std";
 
-/* Multi line comment
-Just for
-Kicks */
-
 20
 21.2
 .0

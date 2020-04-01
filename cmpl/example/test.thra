@@ -3,7 +3,7 @@ program helloworld;
 /* 
     Delphi or Pascal Inspired Language infused with goodness 
     which compiles to plain C89 or C99 not sure yet. Important
-	that it will also compile to LLVM IL too
+    that it will also compile to LLVM IL too
     
     Case-Sensitive
     Not OOP (at the moment)
@@ -11,20 +11,22 @@ program helloworld;
 
 
 
-    TEMPLATES and Array Specialization
-    ** An Array is an internal Template... It takes a Type as the Templated Param
+    TEMPLATES and Specialization
 */
 
 
-/* Functions can be declared prior to their definition
+/*
+        Functions can be declared prior to their definition
 	this however is only possible in Units and not in the
 	Program file.
 	
 	It looks something like this:
 	
-	func proc_name(arg1 : String);
+	    func proc_name(arg1 : String);
 	
 	We want to also be able to define External functions.
+
+            func internal_name(arg1 : Int32) : Int32; cdecl; extern 'external_name';
 	
 */
 
@@ -32,11 +34,11 @@ program helloworld;
 	Pointers & Low level memory access
 	A Raw Pointer works just like in C and Pascal.
 	
-		var my_user_ptr : ^User;
+	    var my_user_ptr : ^User;
 	
 	Now Pointers to Functions are also similar to C and Pascal
 	
-		var my_callback_ptr : func(Int32; String) : Bool;
+	    var my_callback_ptr : func(Int32; String) : Bool;
 	
 	In the Future Fat Pointers to Methods (when/if OOP is added)
 */
@@ -50,32 +52,42 @@ program helloworld;
 	Data Segment (ASM, or C Global Variable) for much faster access,
 	if needed.
 	
-	Allocation of memory on the Heap is similar to C
+	Allocation of memory on the Heap is similar to C, with simpler syntax.
+        In the following example, users is a Pointer to Heap allocated memory
+        which holds 5 Contiguous User Records.
 		
-	        var users : ^Array<User>;
-		#alloc(users);
+	    var users : ^[]User;
+	    #alloc(users, 5);
 
         Stack Allocated Array
 
-                var entities : Array<Entity>[10];
+            var entities : [10]Entity;
 
-        This is automatically allocated to the stack, in the current frame.
+        This is automatically allocated to the stack, in the current frame if
+        declared in a function. If this is in a Recird, the elements will be
+        directly in the Record
+
+            type Cluster : Record (
+                elements : [10]Element;
+            );
+
+
 */
 
 type User : Record (
-	first_name : String;
-	last_name : String;
+    first_name : ^String;
+    last_name : ^String;
 );
 
 type Account : Record (
-    owner : User;  // Garrantees the the entire User record at position in this record
+    owner : User;  // Garrantees the entire User record at position in this record
     // ^myaccount can be safely cast and used User(@myaccount)^.
 );
 
 
 /* Templated Types? */
-type Vector<SIZE_T : Byte, TYPE_T : Type> : Record (
-    el : Array<TYPE_T>[SIZE_T];
+type Vector<SIZE_T : Uint8, TYPE_T : Type> : Record (
+    el : [SIZE_T]TYPE_T;
 );
 
 
