@@ -228,6 +228,7 @@ begin
     FloatState.AddDelta(TDFADelta.Create(TDFAComp_IsIn.Create(DigitCL), FloatState));
     FloatState.AddDelta(TDFADelta.Create(TDFAComp_IsNotIn.Create(DigitCL), FloatEndState, False, True));
 
+    (* Handle Alternative Base Numbers (Floats must be ) *)
     
 end;
 
