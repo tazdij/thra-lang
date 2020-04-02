@@ -35,7 +35,7 @@
         </Mode0>
       </Modes>
     </RunParams>
-    <Units Count="14">
+    <Units Count="15">
       <Unit0>
         <Filename Value="cmpl.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -93,6 +93,10 @@
         <Filename Value="example/thra_0.thra"/>
         <IsPartOfProject Value="True"/>
       </Unit13>
+      <Unit14>
+        <Filename Value="example/thra_1.thra"/>
+        <IsPartOfProject Value="True"/>
+      </Unit14>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

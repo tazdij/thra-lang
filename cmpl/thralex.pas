@@ -18,9 +18,9 @@ type
 
         ELexInt,
         ELexFloat,
-        ELexHexInt,
-        ELexBinInt,
-        ELexOctInt,
+        ELexHexLiteral,
+        ELexBinLiteral,
+        ELexOctLiteral,
         ELexString,
 
         ELexMacro);
@@ -100,7 +100,12 @@ var
 
     StringState, StringEscapeState, StringEndState,
 
-    IntState, FloatState, IntEndState, FloatEndState,
+    IntState, IntEndState,
+    FloatState, FloatEndState,
+    AltBaseLiteralStartState,
+    OctLiteralState, OctLiteralEndState,
+    BinLiteralState, BinLiteralEndState,
+    HexLiteralState, HexLiteralEndState,
 
 
     SemiColonState : TDFAState;
@@ -147,6 +152,14 @@ begin
     FloatState := TDFAState.Create('FLOAT', 'FLOAT', Integer(ELexFloat));
     FloatEndState := TDFAState.Create('FLOAT', 'FLOAT', Integer(ELexFloat));
 
+    AltBaseLiteralStartState := TDFAState.Create('INT', 'INT', Integer(ELexInt));
+    OctLiteralState := TDFAState.Create('OCT', 'OCT', Integer(ELexOctLiteral));
+    OctLiteralEndState := TDFAState.Create('OCT', 'OCT', Integer(ELexOctLiteral));
+    BinLiteralState := TDFAState.Create('BIN', 'BIN', Integer(ELexBinLiteral));
+    BinLiteralEndState := TDFAState.Create('BIN', 'BIN', Integer(ELexBinLiteral));
+    HexLiteralState := TDFAState.Create('HEX', 'HEX', Integer(ELexHexLiteral));
+    HexLiteralEndState := TDFAState.Create('HEX', 'HEX', Integer(ELexHexLiteral));
+
 
     FDfa.AddState(StartState); (* Must add the First "Start" State, before all others *)
     FDfa.AddState(WhitespaceState);
@@ -176,6 +189,14 @@ begin
     FDfa.AddState(IntEndState);
     FDfa.AddState(FloatState);
     FDfa.AddState(FloatEndState);
+
+    FDfa.AddState(AltBaseLiteralStartState);
+    FDfa.AddState(OctLiteralState);
+    FDfa.AddState(OctLiteralEndState);
+    FDfa.AddState(BinLiteralState);
+    FDfa.AddState(BinLiteralEndState);
+    FDfa.AddState(HexLiteralState);
+    FDfa.AddState(HexLiteralEndState);
 
 
     (* Loop whitespace back to start, we don't care about it *)
@@ -229,6 +250,16 @@ begin
     FloatState.AddDelta(TDFADelta.Create(TDFAComp_IsNotIn.Create(DigitCL), FloatEndState, False, True));
 
     (* Handle Alternative Base Numbers (Floats must be ) *)
+    StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('0'), AltBaseLiteralStartState, False));
+    AltBaseLiteralStartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('b'), BinLiteralState, False));
+    AltBaseLiteralStartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('o'), OctLiteralState, False));
+    AltBaseLiteralStartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('x'), HexLiteralState, False));
+    BinLiteralState.AddDelta(TDFADelta.Create(TDFAComp_IsIn.Create(BinDigitCL), BinLiteralState));
+    BinLiteralState.AddDelta(TDFADelta.Create(TDFAComp_IsNotIn.Create(BinDigitCL), BinLiteralEndState, False, True));
+    OctLiteralState.AddDelta(TDFADelta.Create(TDFAComp_IsIn.Create(OctDigitCL), OctLiteralState));
+    OctLiteralState.AddDelta(TDFADelta.Create(TDFAComp_IsNotIn.Create(OctDigitCL), OctLiteralEndState, False, True));
+    HexLiteralState.AddDelta(TDFADelta.Create(TDFAComp_IsIn.Create(HexDigitCL), HexLiteralState));
+    HexLiteralState.AddDelta(TDFADelta.Create(TDFAComp_IsNotIn.Create(HexDigitCL), HexLiteralEndState, False, True));
     
 end;
 

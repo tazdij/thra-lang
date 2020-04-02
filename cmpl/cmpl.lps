@@ -3,7 +3,7 @@
   <ProjectSession>
     <Version Value="11"/>
     <BuildModes Active="Default"/>
-    <Units Count="17">
+    <Units Count="18">
       <Unit0>
         <Filename Value="cmpl.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -76,7 +76,7 @@
       <Unit8>
         <Filename Value="lexdfa.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="5"/>
         <TopLine Value="627"/>
         <UsageCount Value="235"/>
         <Loaded Value="True"/>
@@ -84,27 +84,26 @@
       <Unit9>
         <Filename Value="parser.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="6"/>
         <CursorPos X="24" Y="17"/>
-        <UsageCount Value="59"/>
+        <UsageCount Value="91"/>
         <Loaded Value="True"/>
       </Unit9>
       <Unit10>
         <Filename Value="vm.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="7"/>
         <CursorPos X="14" Y="16"/>
-        <UsageCount Value="59"/>
+        <UsageCount Value="91"/>
         <Loaded Value="True"/>
       </Unit10>
       <Unit11>
         <Filename Value="thralex.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="47"/>
-        <CursorPos X="32" Y="106"/>
-        <UsageCount Value="51"/>
+        <TopLine Value="309"/>
+        <CursorPos X="17" Y="332"/>
+        <UsageCount Value="83"/>
         <Loaded Value="True"/>
       </Unit11>
       <Unit12>
@@ -113,7 +112,7 @@
         <EditorIndex Value="2"/>
         <TopLine Value="78"/>
         <CursorPos X="5" Y="6"/>
-        <UsageCount Value="41"/>
+        <UsageCount Value="73"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit12>
@@ -121,8 +120,8 @@
         <Filename Value="example/thra_0.thra"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="3"/>
-        <CursorPos X="9" Y="8"/>
-        <UsageCount Value="41"/>
+        <CursorPos X="3" Y="16"/>
+        <UsageCount Value="73"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit13>
@@ -131,20 +130,30 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="233"/>
         <CursorPos X="18" Y="246"/>
-        <UsageCount Value="243"/>
+        <UsageCount Value="240"/>
       </Unit14>
       <Unit15>
         <Filename Value="booty.pas"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="32" Y="9"/>
-        <UsageCount Value="206"/>
+        <UsageCount Value="203"/>
       </Unit15>
       <Unit16>
         <Filename Value="../../../../lazarus/fpc/3.0.4/source/rtl/objpas/fgl.pp"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="101"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="4"/>
       </Unit16>
+      <Unit17>
+        <Filename Value="example/thra_1.thra"/>
+        <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="4"/>
+        <CursorPos X="98" Y="8"/>
+        <UsageCount Value="50"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="None"/>
+      </Unit17>
     </Units>
     <JumpHistory Count="15" HistoryIndex="14">
       <Position1>
