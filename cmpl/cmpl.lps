@@ -7,8 +7,8 @@
       <Unit0>
         <Filename Value="cmpl.lpr"/>
         <IsPartOfProject Value="True"/>
-        <TopLine Value="33"/>
-        <CursorPos X="38" Y="49"/>
+        <TopLine Value="30"/>
+        <CursorPos X="23" Y="52"/>
         <UsageCount Value="246"/>
         <Loaded Value="True"/>
       </Unit0>
@@ -86,7 +86,7 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="6"/>
         <CursorPos X="24" Y="17"/>
-        <UsageCount Value="126"/>
+        <UsageCount Value="129"/>
         <Loaded Value="True"/>
       </Unit9>
       <Unit10>
@@ -94,16 +94,17 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="7"/>
         <CursorPos X="14" Y="16"/>
-        <UsageCount Value="126"/>
+        <UsageCount Value="129"/>
         <Loaded Value="True"/>
       </Unit10>
       <Unit11>
         <Filename Value="thralex.pas"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="276"/>
+        <TopLine Value="275"/>
         <CursorPos X="17" Y="332"/>
-        <UsageCount Value="118"/>
+        <UsageCount Value="121"/>
         <Loaded Value="True"/>
       </Unit11>
       <Unit12>
@@ -112,7 +113,7 @@
         <EditorIndex Value="2"/>
         <TopLine Value="78"/>
         <CursorPos X="5" Y="6"/>
-        <UsageCount Value="108"/>
+        <UsageCount Value="111"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit12>
@@ -120,18 +121,17 @@
         <Filename Value="example/thra_0.thra"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="3"/>
-        <CursorPos Y="18"/>
-        <UsageCount Value="108"/>
+        <CursorPos Y="17"/>
+        <UsageCount Value="111"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit13>
       <Unit14>
         <Filename Value="example/thra_1.thra"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
-        <CursorPos X="114" Y="8"/>
-        <UsageCount Value="85"/>
+        <CursorPos X="6" Y="6"/>
+        <UsageCount Value="88"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit14>
@@ -152,7 +152,7 @@
         <Filename Value="../../../../lazarus/fpc/3.0.4/source/rtl/objpas/fgl.pp"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="101"/>
-        <UsageCount Value="0"/>
+        <UsageCount Value="10"/>
       </Unit17>
     </Units>
     <JumpHistory Count="15" HistoryIndex="14">
