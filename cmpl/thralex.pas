@@ -292,6 +292,7 @@ begin
     AltBaseLiteralStartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('o'), OctLiteralState, False));
     AltBaseLiteralStartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('x'), HexLiteralState, False));
     BinLiteralState.AddDelta(TDFADelta.Create(TDFAComp_IsIn.Create(BinDigitCL), BinLiteralState));
+    BinLiteralState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('_'), BinLiteralState, False));
     BinLiteralState.AddDelta(TDFADelta.Create(TDFAComp_IsNotIn.Create(BinDigitCL), BinLiteralEndState, False, True));
     OctLiteralState.AddDelta(TDFADelta.Create(TDFAComp_IsIn.Create(OctDigitCL), OctLiteralState));
     OctLiteralState.AddDelta(TDFADelta.Create(TDFAComp_IsNotIn.Create(OctDigitCL), OctLiteralEndState, False, True));

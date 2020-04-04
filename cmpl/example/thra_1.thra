@@ -5,7 +5,7 @@ import "std";
 
 
 type TokenType : Enum (
-
+    STRING = 0b0000_0001
 );
 
 type Token : Record (
