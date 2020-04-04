@@ -86,7 +86,7 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="8"/>
         <CursorPos X="24" Y="17"/>
-        <UsageCount Value="169"/>
+        <UsageCount Value="170"/>
         <Loaded Value="True"/>
       </Unit9>
       <Unit10>
@@ -94,16 +94,16 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="9"/>
         <CursorPos X="14" Y="16"/>
-        <UsageCount Value="169"/>
+        <UsageCount Value="170"/>
         <Loaded Value="True"/>
       </Unit10>
       <Unit11>
         <Filename Value="thralex.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="251"/>
-        <CursorPos X="97" Y="295"/>
-        <UsageCount Value="161"/>
+        <TopLine Value="270"/>
+        <CursorPos X="92" Y="288"/>
+        <UsageCount Value="162"/>
         <Loaded Value="True"/>
       </Unit11>
       <Unit12>
@@ -112,7 +112,7 @@
         <EditorIndex Value="2"/>
         <TopLine Value="66"/>
         <CursorPos X="4" Y="71"/>
-        <UsageCount Value="151"/>
+        <UsageCount Value="152"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit12>
@@ -121,7 +121,7 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="3"/>
         <CursorPos X="26" Y="7"/>
-        <UsageCount Value="151"/>
+        <UsageCount Value="152"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit13>
@@ -130,8 +130,8 @@
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="6"/>
-        <CursorPos X="25" Y="8"/>
-        <UsageCount Value="128"/>
+        <CursorPos X="23" Y="13"/>
+        <UsageCount Value="129"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit14>
@@ -140,7 +140,7 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="5"/>
         <CursorPos X="2" Y="3"/>
-        <UsageCount Value="60"/>
+        <UsageCount Value="61"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit15>

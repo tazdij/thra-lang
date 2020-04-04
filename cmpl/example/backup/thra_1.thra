@@ -5,9 +5,15 @@ import "std";
 
 
 type TokenType : Enum (
-
+    STRING_LIT = 0b0000_0001,
+    DEC_LIT    = 0b0000_0010
 );
 
 type Token : Record (
     _type : TokenType;
 );
+
+func some_function() {
+    var something : Token;
+    something._type := TokenType.STRING_LIT;
+};

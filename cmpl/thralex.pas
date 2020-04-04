@@ -17,6 +17,9 @@ type
         ELexComment,
         ELexMultiComment,
 
+        ELexComma,
+        ELexEquals,
+        ELexAssign,
         ELexColon,
         ELexSemiColon,
 
@@ -120,7 +123,7 @@ var
 
     SymbolState, SymbolEndState,
 
-
+    CommaState,
     IntState, IntEndState,
     FloatState, FloatEndState,
     AltBaseLiteralStartState,
@@ -128,7 +131,11 @@ var
     BinLiteralState, BinLiteralEndState,
     HexLiteralState, HexLiteralEndState,
 
+    EqualState,
+
     ColonState,
+    ColonEndState,
+    AssignState,
     SemiColonState : TDFAState;
 
 begin
@@ -161,7 +168,13 @@ begin
     LBraceState := TDFAState.Create('LBRACE', 'LBRACE', Integer(ELexLBrace));
     RBraceState := TDFAState.Create('RBRACE', 'RBRACE', Integer(ELexRBrace));
 
+    CommaState := TDFAState.Create('COMMA', 'COMMA', Integer(ELexComma));
+
+    EqualState := TDFAState.Create('EQUAL', 'EQUAL', Integer(ELexEquals));
+
     ColonState := TDFAState.Create('COLON', 'COLON', Integer(ELexColon));
+    ColonEndState := TDFAState.Create('COLON', 'COLON', Integer(ELexColon));
+    AssignState := TDFAState.Create('ASSIGN', 'ASSIGN', Integer(ELexAssign));
     SemiColonState := TDFAState.Create('SEMICOLON', 'SEMICOLON', Integer(ELexSemiColon));
 
     SymbolState := TDFAState.Create('SYMBOL', 'SYMBOL', Integer(ELexSymbol));
@@ -204,8 +217,13 @@ begin
     FDfa.AddState(LBraceState);
     FDfa.AddState(RBraceState);
 
+    FDfa.AddState(EqualState);
+
     FDfa.AddState(SemiColonState);
     FDfa.AddState(ColonState);
+    FDfa.AddState(ColonEndState);
+    FDfa.AddState(AssignState);
+    FDfa.AddState(CommaState);
 
     FDfa.AddState(SymbolState);
     FDfa.AddState(SymbolEndState);
@@ -256,6 +274,13 @@ begin
 
     (* Handle Colon *)
     StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create(':'), ColonState));
+    ColonState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('='), AssignState));
+    ColonState.AddDelta(TDFADelta.Create(TDFAComp_AnyChar.Create(), ColonEndState, False, True));
+
+    StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create(','), CommaState));
+
+    StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('='), EqualState));
+
 
     (* Handle IdentStart *)
     StartState.AddDelta(TDFADelta.Create(TDFAComp_IsIn.Create(IdentStartCL), IdentState));
