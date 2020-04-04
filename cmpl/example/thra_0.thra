@@ -4,7 +4,7 @@ program thra_0;
 import "std";
 
 /* Multi line comment
-Just for
+Just for * something else
 Kicks */
 
 0b1001100

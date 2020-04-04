@@ -12,9 +12,15 @@ type
         ELexNone,
         ELexIdent,
         ELexLParen, ELexRParen,
+        ELexLBrace, ELexRBrace,
+
         ELexComment,
         ELexMultiComment,
+
+        ELexColon,
         ELexSemiColon,
+
+        ELexSymbol,
 
         ELexInt,
         ELexFloat,
@@ -82,6 +88,16 @@ var
         'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
         'u', 'v', 'w', 'x', 'y', 'z', '_');
 
+    SymbolCL : Array[0..62] of AnsiString = (
+        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
+        'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
+        'U', 'V', 'W', 'X', 'Y', 'Z',
+        'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
+        'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
+        'u', 'v', 'w', 'x', 'y', 'z',
+        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+        '_');
+
     WhitespaceCL : Array[0..3] of AnsiString = (#13, #10, #7, #32);
     StringEscapeCL : Array[0..1] of AnsiString = ('\', '"');
 
@@ -97,8 +113,13 @@ var
     IdentState, IdentEndState,
     LParenState, //LParenEndState,
     RParenState, //RParenEndState,
+    LBraceState,
+    RBraceState,
 
     StringState, StringEscapeState, StringEndState,
+
+    SymbolState, SymbolEndState,
+
 
     IntState, IntEndState,
     FloatState, FloatEndState,
@@ -107,7 +128,7 @@ var
     BinLiteralState, BinLiteralEndState,
     HexLiteralState, HexLiteralEndState,
 
-
+    ColonState,
     SemiColonState : TDFAState;
 
 begin
@@ -135,12 +156,16 @@ begin
     IdentEndState := TDFAState.Create('IDENT', 'IDENT', Integer(ELexIdent));
 
     LParenState := TDFAState.Create('LPAREN', 'LPAREN', Integer(ELexLParen));
-    //LParenEndState := TDFAState.Create('LPAREN', 'LPAREN', Integer(ELexLParen));
-
     RParenState := TDFAState.Create('RPAREN', 'RPAREN', Integer(ELexRParen));
-    //RParenEndState := TDFAState.Create('RPAREN', 'RPAREN', Integer(ELexRParen));
 
+    LBraceState := TDFAState.Create('LBRACE', 'LBRACE', Integer(ELexLBrace));
+    RBraceState := TDFAState.Create('RBRACE', 'RBRACE', Integer(ELexRBrace));
+
+    ColonState := TDFAState.Create('COLON', 'COLON', Integer(ELexColon));
     SemiColonState := TDFAState.Create('SEMICOLON', 'SEMICOLON', Integer(ELexSemiColon));
+
+    SymbolState := TDFAState.Create('SYMBOL', 'SYMBOL', Integer(ELexSymbol));
+    SymbolEndState := TDFAState.Create('SYMBOL', 'SYMBOL', Integer(ELexSymbol));
 
 
     StringState := TDFAState.Create('STRING', 'STRING', Integer(ELexString));
@@ -173,16 +198,20 @@ begin
     FDfa.AddState(IdentState);
     FDfa.AddState(IdentEndState);
 
-    FDfa.addState(LParenState);
-    //FDfa.AddState(LParenEndState);
+    FDfa.AddState(LParenState);
+    FDfa.AddState(RParenState);
 
-    FDfa.addState(RParenState);
-    //FDfa.AddState(RParenEndState);
+    FDfa.AddState(LBraceState);
+    FDfa.AddState(RBraceState);
 
-    FDfa.addState(SemiColonState);
+    FDfa.AddState(SemiColonState);
+    FDfa.AddState(ColonState);
 
-    FDfa.addState(StringState);
-    FDfa.addState(StringEscapeState);
+    FDfa.AddState(SymbolState);
+    FDfa.AddState(SymbolEndState);
+
+    FDfa.AddState(StringState);
+    FDfa.AddState(StringEscapeState);
     FDfa.AddState(StringEndState);
 
     FDfa.AddState(IntState);
@@ -217,19 +246,27 @@ begin
 
     (* Handle LParen *)
     StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('('), LParenState));
-    //LParenState.AddDelta(TDFADelta.Create(TDFAComp_IsNotIn.Create(DigitCL), RegisterEndState, False, True));
-
-    (* Handle RParen *)
     StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create(')'), RParenState));
+
+    StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('{'), LBraceState));
+    StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('}'), RBraceState));
 
     (* Handle SemiColon *)
     StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create(';'), SemiColonState));
+
+    (* Handle Colon *)
+    StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create(':'), ColonState));
 
     (* Handle IdentStart *)
     StartState.AddDelta(TDFADelta.Create(TDFAComp_IsIn.Create(IdentStartCL), IdentState));
     IdentState.AddDelta(TDFADelta.Create(TDFAComp_IsIn.Create(IdentStartCL), IdentState));
     IdentState.AddDelta(TDFADelta.Create(TDFAComp_IsIn.Create(DigitCL), IdentState));
     IdentState.AddDelta(TDFADelta.Create(TDFAComp_And.Create(IdentCLs), IdentEndState, False, True));
+
+    (* Handle Symbols *)
+    StartState.AddDelta(TDFADelta.Create(TDFAComp_IsIn.Create(UpperAlphaCL), SymbolState));
+    SymbolState.AddDelta(TDFADelta.Create(TDFAComp_IsIn.Create(SymbolCL), SymbolState));
+    SymbolState.AddDelta(TDFADelta.Create(TDFAComp_IsNotIn.Create(SymbolCL), SymbolEndState, False, True));
 
     (* Handle String *)
     StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('"'), StringState, False));

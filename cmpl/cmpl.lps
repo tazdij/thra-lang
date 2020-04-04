@@ -3,11 +3,11 @@
   <ProjectSession>
     <Version Value="11"/>
     <BuildModes Active="Default"/>
-    <Units Count="18">
+    <Units Count="19">
       <Unit0>
         <Filename Value="cmpl.lpr"/>
         <IsPartOfProject Value="True"/>
-        <TopLine Value="30"/>
+        <TopLine Value="33"/>
         <CursorPos X="23" Y="52"/>
         <UsageCount Value="246"/>
         <Loaded Value="True"/>
@@ -15,10 +15,10 @@
       <Unit1>
         <Filename Value="chardfa.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="380"/>
+        <EditorIndex Value="4"/>
         <CursorPos X="37" Y="394"/>
         <UsageCount Value="246"/>
+        <Loaded Value="True"/>
       </Unit1>
       <Unit2>
         <Filename Value="fpcadds.pas"/>
@@ -76,7 +76,7 @@
       <Unit8>
         <Filename Value="lexdfa.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="7"/>
         <TopLine Value="627"/>
         <UsageCount Value="235"/>
         <Loaded Value="True"/>
@@ -84,36 +84,35 @@
       <Unit9>
         <Filename Value="parser.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="8"/>
         <CursorPos X="24" Y="17"/>
-        <UsageCount Value="129"/>
+        <UsageCount Value="165"/>
         <Loaded Value="True"/>
       </Unit9>
       <Unit10>
         <Filename Value="vm.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="9"/>
         <CursorPos X="14" Y="16"/>
-        <UsageCount Value="129"/>
+        <UsageCount Value="165"/>
         <Loaded Value="True"/>
       </Unit10>
       <Unit11>
         <Filename Value="thralex.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="275"/>
-        <CursorPos X="17" Y="332"/>
-        <UsageCount Value="121"/>
+        <TopLine Value="259"/>
+        <CursorPos X="90" Y="270"/>
+        <UsageCount Value="157"/>
         <Loaded Value="True"/>
       </Unit11>
       <Unit12>
         <Filename Value="example/test.thra"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="2"/>
-        <TopLine Value="78"/>
-        <CursorPos X="5" Y="6"/>
-        <UsageCount Value="111"/>
+        <TopLine Value="66"/>
+        <CursorPos X="4" Y="71"/>
+        <UsageCount Value="147"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit12>
@@ -121,17 +120,18 @@
         <Filename Value="example/thra_0.thra"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="3"/>
-        <CursorPos Y="17"/>
-        <UsageCount Value="111"/>
+        <CursorPos X="26" Y="7"/>
+        <UsageCount Value="147"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit13>
       <Unit14>
         <Filename Value="example/thra_1.thra"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="4"/>
-        <CursorPos X="6" Y="6"/>
-        <UsageCount Value="88"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="6"/>
+        <CursorPos X="23" Y="12"/>
+        <UsageCount Value="124"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit14>
@@ -140,22 +140,31 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="233"/>
         <CursorPos X="18" Y="246"/>
-        <UsageCount Value="236"/>
+        <UsageCount Value="232"/>
       </Unit15>
       <Unit16>
         <Filename Value="booty.pas"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="32" Y="9"/>
-        <UsageCount Value="199"/>
+        <UsageCount Value="195"/>
       </Unit16>
       <Unit17>
         <Filename Value="../../../../lazarus/fpc/3.0.4/source/rtl/objpas/fgl.pp"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="101"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="6"/>
       </Unit17>
+      <Unit18>
+        <Filename Value="todo.txt"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="5"/>
+        <CursorPos X="2" Y="3"/>
+        <UsageCount Value="56"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="None"/>
+      </Unit18>
     </Units>
-    <JumpHistory Count="15" HistoryIndex="14">
+    <JumpHistory Count="19" HistoryIndex="18">
       <Position1>
         <Filename Value="cmpl.lpr"/>
         <Caret Line="37" Column="23" TopLine="10"/>
@@ -215,6 +224,22 @@
         <Filename Value="thralex.pas"/>
         <Caret Line="186" Column="98" TopLine="178"/>
       </Position15>
+      <Position16>
+        <Filename Value="thralex.pas"/>
+        <Caret Line="151" Column="68" TopLine="132"/>
+      </Position16>
+      <Position17>
+        <Filename Value="thralex.pas"/>
+        <Caret Line="152" Column="78" TopLine="137"/>
+      </Position17>
+      <Position18>
+        <Filename Value="thralex.pas"/>
+        <Caret Line="91" Column="27" TopLine="71"/>
+      </Position18>
+      <Position19>
+        <Filename Value="thralex.pas"/>
+        <Caret Line="99" Column="9" TopLine="71"/>
+      </Position19>
     </JumpHistory>
     <RunParams>
       <FormatVersion Value="2"/>

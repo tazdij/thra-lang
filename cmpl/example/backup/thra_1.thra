@@ -2,6 +2,9 @@ program thra_1;
 
 import "std";
 
+type TokenType : Enum (
+
+);
 
 type Token : Record (
 
