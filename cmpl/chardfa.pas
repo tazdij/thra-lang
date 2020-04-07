@@ -102,14 +102,20 @@ type
     TDFAState = class;
 
     TDFADelta = class
-        private
-            FComparator : TDFAComparator;
-            FDestination : TDFAState;
-            FAddToBuffer : Boolean;
-            FReprocess : Boolean;
-
+        protected
+            FComparator : TDFAComparator;  (* The Object which will determine if this Delta should run *)
+            FDestination : TDFAState;      (* the State we will transition to with this delta *)
+            FAddToBuffer : Boolean;        (* If True, add Character to selected buffer *)
+            FReprocess : Boolean;          (* If this delta runs, reprocess the Char *)
+            FUseLimboBuffer : Boolean;     (* Put Char into Limbo Buffer, instead of Main Buffer *)
+            FEmptyLimboBuffer : Boolean;   (* Emptys the Limbo Buffer Prior to Running Delta *)
         public
-            constructor Create(AComparator : TDFAComparator; ADestination : TDFAState; AAddToBuffer : Boolean = True; AReprocess : Boolean = False);
+            constructor Create(AComparator : TDFAComparator;
+                               ADestination : TDFAState;
+                               AAddToBuffer : Boolean = True;
+                               AReprocess : Boolean = False;
+                               AUseLimboBuffer : Boolean = False;
+                               AEmptyLimboBuffer : Boolean = False);
             destructor Destroy(); Override;
     end;
 
@@ -141,6 +147,7 @@ type
             FCurState : TDFAState;
             FStartState : TDFAState;
             FBuffer : AnsiString;
+            FLimboBuffer : AnsiString;
             FTokenHandler : TDFATokenHandler;
         protected
             
@@ -410,12 +417,19 @@ begin
     Result := True;
 end;
 
-constructor TDFADelta.Create(AComparator : TDFAComparator; ADestination : TDFAState; AAddToBuffer : Boolean = True; AReprocess : Boolean = False);
+constructor TDFADelta.Create(AComparator : TDFAComparator;
+                             ADestination : TDFAState;
+                             AAddToBuffer : Boolean = True;
+                             AReprocess : Boolean = False;
+                             AUseLimboBuffer : Boolean = False;
+                             AEmptyLimboBuffer : Boolean = False);
 begin
      self.FComparator := AComparator;
      self.FDestination := ADestination;
      self.FAddToBuffer := AAddToBuffer;
      self.FReprocess := AReprocess;
+     self.FUseLimboBuffer := AUseLimboBuffer;
+     self.FEmptyLimboBuffer := AEmptyLimboBuffer;
 end;
 
 destructor TDFADelta.Destroy();
@@ -460,6 +474,7 @@ begin
 
     for delta in self.FDeltas do
     begin
+
       if delta.FComparator.Compare(c) then
       begin
           Result := True;
@@ -471,10 +486,46 @@ begin
               reprocess := True;
           end;
 
+          if (self.FDfa.FLimboBuffer <> '') and delta.FEmptyLimboBuffer then
+          begin
+              self.FDfa.FLimboBuffer := '';
+          end;
+
+
+          (*
+            If we are adding to the Buffers the we need to handle both
+            Main and Limbo Buffers.
+            Limbo Buffer is used when we are not sure if we want to keep the
+            contents of the delta. We can then use the
+
+            Even if we aren't adding the current Character, If the LimboBuffer
+            is not empty, it will be added to the buffer
+          *)
           if delta.FAddToBuffer then
           begin
               (* Add the current character to the DFA Buffer for current token *)
-              self.FDfa.FBuffer := self.FDfa.FBuffer + c;
+              if delta.FUseLimboBuffer then
+              begin
+                self.FDfa.FLimboBuffer := self.FDfa.FLimboBuffer + c;
+              end
+              else
+              begin
+                if self.FDfa.FLimboBuffer <> '' then
+                begin
+                    self.FDfa.FBuffer := self.FDfa.FBuffer + self.FDfa.FLimboBuffer;
+                    self.FDfa.FLimboBuffer := '';
+                end;
+
+                self.FDfa.FBuffer := self.FDfa.FBuffer + c;
+              end;
+          end
+          else
+          begin
+            if self.FDfa.FLimboBuffer <> '' then
+            begin
+                self.FDfa.FBuffer := self.FDfa.FBuffer + self.FDfa.FLimboBuffer;
+                self.FDfa.FLimboBuffer := '';
+            end;
           end;
 
           (* Move to Dest state *)
@@ -496,7 +547,8 @@ end;
 
 constructor TCharDFA.Create();
 begin
-
+  self.FLimboBuffer := '';
+  self.FBuffer := '';
 end;
 
 destructor TCharDFA.Destroy();

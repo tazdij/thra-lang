@@ -22,6 +22,17 @@ type
         ELexAssign,
         ELexColon,
         ELexSemiColon,
+        ELexAccessor,
+
+        ELexLessThan,
+        ELexGreaterThan,
+
+        ELexAdd,
+        ELexSubtract,
+        ELexMultiply,
+        ELexDivide,
+        ELexIntDivide,
+        ELexModulo,
 
         ELexSymbol,
 
@@ -124,15 +135,28 @@ var
     SymbolState, SymbolEndState,
 
     CommaState,
-    IntState, IntEndState,
+    IntState, IntEndState, IntZeroState,
     FloatState, FloatEndState,
     AltBaseLiteralStartState,
     OctLiteralState, OctLiteralEndState,
     BinLiteralState, BinLiteralEndState,
     HexLiteralState, HexLiteralEndState,
 
-    EqualState,
+    MacroState,
+    MacroEndState,
 
+    (* Maths States *)
+    AddState,
+    SubtractState,
+    MultiplyState,
+    DivideState,
+    ModuloState,
+
+    LessThanState,
+    GreaterThanState,
+
+    EqualState,
+    AccessorState,
     ColonState,
     ColonEndState,
     AssignState,
@@ -148,7 +172,7 @@ begin
     (* Assign the LexToken Generator *)
     FDfa.SetTokenHandler(@Self.HandleDFAToken);
     
-    (* configure DFA to Lex LnfwSource *)
+    (* configure DFA to Lex Thra Source *)
     StartState := TDFAState.Create('START', 'START', Integer(ELexNone));
     WhitespaceState := TDFAState.Create('WHITESPACE', 'WS', Integer(ELexNone));
 
@@ -169,6 +193,7 @@ begin
     RBraceState := TDFAState.Create('RBRACE', 'RBRACE', Integer(ELexRBrace));
 
     CommaState := TDFAState.Create('COMMA', 'COMMA', Integer(ELexComma));
+    AccessorState := TDFAState.Create('ACCESSOR', 'ACCESSOR', Integer(ELexAccessor));
 
     EqualState := TDFAState.Create('EQUAL', 'EQUAL', Integer(ELexEquals));
 
@@ -180,6 +205,14 @@ begin
     SymbolState := TDFAState.Create('SYMBOL', 'SYMBOL', Integer(ELexSymbol));
     SymbolEndState := TDFAState.Create('SYMBOL', 'SYMBOL', Integer(ELexSymbol));
 
+    AddState := TDFAState.Create('ADD', 'ADD', Integer(ELexAdd));
+    SubtractState := TDFAState.Create('SUBTRACT', 'SUBTRACT', Integer(ELexSubtract));
+    MultiplyState := TDFAState.Create('MULTIPLY', 'MULTIPLY', Integer(ELexMultiply));
+    DivideState := TDFAState.Create('DIVIDE', 'DIVIDE', Integer(ELexDivide));
+    ModuloState := TDFAState.Create('MODULO', 'MODULO', Integer(ELexModulo));
+
+    LessThanState := TDFAState.Create('LESSTHAN', 'LESSTHAN', Integer(ELexLessThan));
+    GreaterThanState := TDFAState.Create('GREATERTHAN', 'GREATERTHAN', Integer(ELexGreaterThan));
 
     StringState := TDFAState.Create('STRING', 'STRING', Integer(ELexString));
     StringEscapeState := TDFAState.Create('STRINGESCAPE', 'STRING', Integer(ELexString));
@@ -187,6 +220,7 @@ begin
 
     IntState := TDFAState.Create('INT', 'INT', Integer(ELexInt));
     IntEndState := TDFAState.Create('INT', 'INT', Integer(ELexInt));
+    IntZeroState := TDFAState.Create('INT', 'INT', Integer(ELexInt));
     FloatState := TDFAState.Create('FLOAT', 'FLOAT', Integer(ELexFloat));
     FloatEndState := TDFAState.Create('FLOAT', 'FLOAT', Integer(ELexFloat));
 
@@ -197,6 +231,9 @@ begin
     BinLiteralEndState := TDFAState.Create('BIN', 'BIN', Integer(ELexBinLiteral));
     HexLiteralState := TDFAState.Create('HEX', 'HEX', Integer(ELexHexLiteral));
     HexLiteralEndState := TDFAState.Create('HEX', 'HEX', Integer(ELexHexLiteral));
+
+    MacroState := TDFAState.Create('MACRO', 'MACRO', Integer(ELexMacro));
+    MacroEndState := TDFAState.Create('MACRO', 'MACRO', Integer(ELexMacro));
 
 
     FDfa.AddState(StartState); (* Must add the First "Start" State, before all others *)
@@ -218,12 +255,21 @@ begin
     FDfa.AddState(RBraceState);
 
     FDfa.AddState(EqualState);
-
+    FDfa.AddState(AccessorState);
     FDfa.AddState(SemiColonState);
     FDfa.AddState(ColonState);
     FDfa.AddState(ColonEndState);
     FDfa.AddState(AssignState);
     FDfa.AddState(CommaState);
+
+    FDfa.AddState(AddState);
+    FDfa.AddState(SubtractState);
+    FDfa.AddState(MultiplyState);
+    FDfa.AddState(DivideState);
+    FDfa.AddState(ModuloState);
+
+    FDfa.AddState(LessThanState);
+    FDfa.AddState(GreaterThanState);
 
     FDfa.AddState(SymbolState);
     FDfa.AddState(SymbolEndState);
@@ -234,6 +280,7 @@ begin
 
     FDfa.AddState(IntState);
     FDfa.AddState(IntEndState);
+    FDfa.AddState(IntZeroState);
     FDfa.AddState(FloatState);
     FDfa.AddState(FloatEndState);
 
@@ -245,6 +292,9 @@ begin
     FDfa.AddState(HexLiteralState);
     FDfa.AddState(HexLiteralEndState);
 
+    FDfa.AddState(MacroState);
+    FDfa.AddState(MacroEndState);
+
 
     (* Loop whitespace back to start, we don't care about it *)
     StartState.AddDelta(TDFADelta.Create(TDFAComp_IsIn.Create(WhitespaceCL), StartState, False));
@@ -253,33 +303,48 @@ begin
     StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('/'), CommentStartState, False));
     CommentStartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('/'), CommentSingleLineState, False));
     CommentStartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('*'), CommentMultiLineState, False));
+    CommentStartState.AddDelta(TDFADelta.Create(TDFAComp_AnyChar.Create(), DivideState, False, True)); // Divide State from CommentStart
     CommentSingleLineState.AddDelta(TDFADelta.Create(TDFAComp_IsNot.Create(#10), CommentSingleLineState));
     CommentSingleLineState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create(#10), CommentEndState, False));
     CommentMultiLineState.AddDelta(TDFADelta.Create(TDFAComp_IsNot.Create('*'), CommentMultiLineState));
-    CommentMultiLineState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('*'), CommentMultiLineEndingState));
+    CommentMultiLineState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('*'), CommentMultiLineEndingState, True, False, True, True));
     CommentMultiLineEndingState.AddDelta(TDFADelta.Create(TDFAComp_IsNot.Create('/'), CommentMultiLineState));
-    CommentMultiLineEndingState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('/'), CommentMultiLineEndState, False));
+    CommentMultiLineEndingState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('/'), CommentMultiLineEndState, False, False, False, True));
     // All MultiComments have a trailing * to cleanup at some stage
+
+    StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('#'), MacroState, False));
+    MacroState.AddDelta(TDFADelta.Create(TDFAComp_IsIn.Create(IdentStartCL), MacroState));
+    MacroState.AddDelta(TDFADelta.Create(TDFAComp_IsNotIn.Create(IdentStartCL), MacroEndState));
 
 
     (* Handle LParen *)
-    StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('('), LParenState));
-    StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create(')'), RParenState));
+    StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('('), LParenState, False));
+    StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create(')'), RParenState, False));
 
-    StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('{'), LBraceState));
-    StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('}'), RBraceState));
+    StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('{'), LBraceState, False));
+    StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('}'), RBraceState, False));
 
     (* Handle SemiColon *)
-    StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create(';'), SemiColonState));
+    StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create(';'), SemiColonState, False));
 
     (* Handle Colon *)
-    StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create(':'), ColonState));
-    ColonState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('='), AssignState));
+    StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create(':'), ColonState, False));
+    ColonState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('='), AssignState, False));
     ColonState.AddDelta(TDFADelta.Create(TDFAComp_AnyChar.Create(), ColonEndState, False, True));
 
-    StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create(','), CommaState));
+    StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('.'), AccessorState, False));
+    StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create(','), CommaState, False));
 
-    StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('='), EqualState));
+    StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('='), EqualState, False));
+
+    StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('+'), AddState, False));
+    StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('-'), SubtractState, False));
+    StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('*'), MultiplyState, False));
+
+    StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('<'), LessThanState, False));
+    StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('>'), GreaterThanState, False));
+
+
 
 
     (* Handle IdentStart *)
@@ -312,10 +377,13 @@ begin
     FloatState.AddDelta(TDFADelta.Create(TDFAComp_IsNotIn.Create(DigitCL), FloatEndState, False, True));
 
     (* Handle Alternative Base Numbers (Floats must be ) *)
-    StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('0'), AltBaseLiteralStartState, False));
-    AltBaseLiteralStartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('b'), BinLiteralState, False));
-    AltBaseLiteralStartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('o'), OctLiteralState, False));
-    AltBaseLiteralStartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('x'), HexLiteralState, False));
+    StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('0'), AltBaseLiteralStartState, True, False, True, True));
+    AltBaseLiteralStartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('b'), BinLiteralState, False, False, False, True));
+    AltBaseLiteralStartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('o'), OctLiteralState, False, False, False, True));
+    AltBaseLiteralStartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('x'), HexLiteralState, False, False, False, True));
+    AltBaseLiteralStartState.AddDelta(TDFADelta.Create(TDFAComp_IsIn.Create(DigitCL), IntState)); // Go to Integer
+    AltBaseLiteralStartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('.'), FloatState));
+    AltBaseLiteralStartState.AddDelta(TDFADelta.Create(TDFAComp_AnyChar.Create(), IntZeroState, False, True)); // Finally this is only a Zero
     BinLiteralState.AddDelta(TDFADelta.Create(TDFAComp_IsIn.Create(BinDigitCL), BinLiteralState));
     BinLiteralState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('_'), BinLiteralState, False));
     BinLiteralState.AddDelta(TDFADelta.Create(TDFAComp_IsNotIn.Create(BinDigitCL), BinLiteralEndState, False, True));
@@ -323,7 +391,7 @@ begin
     OctLiteralState.AddDelta(TDFADelta.Create(TDFAComp_IsNotIn.Create(OctDigitCL), OctLiteralEndState, False, True));
     HexLiteralState.AddDelta(TDFADelta.Create(TDFAComp_IsIn.Create(HexDigitCL), HexLiteralState));
     HexLiteralState.AddDelta(TDFADelta.Create(TDFAComp_IsNotIn.Create(HexDigitCL), HexLiteralEndState, False, True));
-    
+
 end;
 
 

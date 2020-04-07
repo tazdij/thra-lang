@@ -1,7 +1,7 @@
 program thra_1;
 
 import "std";
-
+import "gl";
 
 
 type TokenType : Enum (
@@ -11,9 +11,15 @@ type TokenType : Enum (
 
 type Token : Record (
     _type : TokenType,
+
 );
 
 func some_function() {
     var something : Token;
     something._type := TokenType.STRING_LIT;
+
+    var i : Int32 := 0;
+    var f : Float32 := 0.0;
+    i := 30;
+    f := i / 2;
 };

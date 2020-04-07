@@ -1,19 +1,25 @@
 program thra_1;
 
 import "std";
-
+import "gl";
 
 
 type TokenType : Enum (
     STRING_LIT = 0b0000_0001,
-    DEC_LIT    = 0b0000_0010
+    DEC_LIT    = 0xDE
 );
 
 type Token : Record (
-    _type : TokenType;
+    _type : TokenType,
+
 );
 
 func some_function() {
     var something : Token;
     something._type := TokenType.STRING_LIT;
+
+    var i : Int32 := 0;
+    var f : Float32 := 0.0;
+    i := 30;
+    f := i / 2;
 };
