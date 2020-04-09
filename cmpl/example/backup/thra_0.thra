@@ -7,11 +7,11 @@ import "std";
 Just for * something else
 Kicks */
 
-0b1001100
+0b1001100 * 0.0
 0o01234567
 0x0123456789ABCDEF
 
 20
 21.2
-.0
+0.0
 

@@ -4,57 +4,10 @@ unit thralex;
 
 interface
 
-uses chardfa;
+uses chardfa, thrastructs;
 
 type
-    ELexTokenType = (
-        (* None, is used when there is no Token needed *)
-        ELexNone,
-        ELexIdent,
-        ELexLParen, ELexRParen,
-        ELexLBrace, ELexRBrace,
 
-        ELexComment,
-        ELexMultiComment,
-
-        ELexComma,
-        ELexEquals,
-        ELexAssign,
-        ELexColon,
-        ELexSemiColon,
-        ELexAccessor,
-
-        ELexLessThan,
-        ELexGreaterThan,
-
-        ELexAdd,
-        ELexSubtract,
-        ELexMultiply,
-        ELexDivide,
-        ELexIntDivide,
-        ELexModulo,
-
-        ELexSymbol,
-
-        ELexInt,
-        ELexFloat,
-        ELexHexLiteral,
-        ELexBinLiteral,
-        ELexOctLiteral,
-        ELexString,
-
-        ELexMacro);
-    
-    PLexToken = ^TLexToken;
-    TLexToken = record
-        TokenType : ELexTokenType;
-        Name : AnsiString;
-        LexValue : AnsiString;
-        LineNum : Cardinal;
-        CharNum : Cardinal;
-    end;
-    
-    TLexTokenArray = Array of TLexToken;
     
     TLexer = class(TObject)
         private
@@ -125,10 +78,12 @@ var
     CommentMultiLineState, CommentMultiLineEndingState, CommentMultiLineEndState,
     CommentSingleLineState, CommentEndState,
     IdentState, IdentEndState,
-    LParenState, //LParenEndState,
-    RParenState, //RParenEndState,
-    LBraceState,
-    RBraceState,
+    LParenState, RParenState,
+    LBraceState, RBraceState,
+    LBracketState, RBracketState,
+
+    CaratState,
+    AtState,
 
     StringState, StringEscapeState, StringEndState,
 
@@ -192,6 +147,12 @@ begin
     LBraceState := TDFAState.Create('LBRACE', 'LBRACE', Integer(ELexLBrace));
     RBraceState := TDFAState.Create('RBRACE', 'RBRACE', Integer(ELexRBrace));
 
+    LBracketState := TDFAState.Create('LBRACKET', 'LBRACKET', Integer(ELexLBracket));
+    RBracketState := TDFAState.Create('RBRACKET', 'RBRACKET', Integer(ELexRBracket));
+
+    CaratState := TDFAState.Create('CARAT', 'CARAT', Integer(ELexCarat));
+    AtState := TDFAState.Create('AT', 'AT', Integer(ELexAt));
+
     CommaState := TDFAState.Create('COMMA', 'COMMA', Integer(ELexComma));
     AccessorState := TDFAState.Create('ACCESSOR', 'ACCESSOR', Integer(ELexAccessor));
 
@@ -254,6 +215,12 @@ begin
     FDfa.AddState(LBraceState);
     FDfa.AddState(RBraceState);
 
+    FDfa.AddState(LBracketState);
+    FDfa.AddState(RBracketState);
+
+    FDfa.AddState(CaratState);
+    FDfa.AddState(AtState);
+
     FDfa.AddState(EqualState);
     FDfa.AddState(AccessorState);
     FDfa.AddState(SemiColonState);
@@ -314,20 +281,27 @@ begin
 
     StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('#'), MacroState, False));
     MacroState.AddDelta(TDFADelta.Create(TDFAComp_IsIn.Create(IdentStartCL), MacroState));
-    MacroState.AddDelta(TDFADelta.Create(TDFAComp_IsNotIn.Create(IdentStartCL), MacroEndState));
+    MacroState.AddDelta(TDFADelta.Create(TDFAComp_IsNotIn.Create(IdentStartCL), MacroEndState, False, True));
 
 
-    (* Handle LParen *)
+    (* Handle Parens, Braces & Brackets *)
     StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('('), LParenState, False));
     StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create(')'), RParenState, False));
 
     StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('{'), LBraceState, False));
     StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('}'), RBraceState, False));
 
+    StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('['), LBracketState, False));
+    StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create(']'), RBracketState, False));
+
+    (* Pointers *)
+    StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('^'), CaratState, False));
+    StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('@'), AtState, False));
+
     (* Handle SemiColon *)
     StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create(';'), SemiColonState, False));
 
-    (* Handle Colon *)
+    (* Handle Colon & Assign *)
     StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create(':'), ColonState, False));
     ColonState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('='), AssignState, False));
     ColonState.AddDelta(TDFADelta.Create(TDFAComp_AnyChar.Create(), ColonEndState, False, True));
@@ -407,7 +381,7 @@ procedure TLexer.HandleDFAToken(token : PDFAToken);
 var pToken : PLexToken;
     i : Integer;
 begin
-  WriteLn('#TOKEN: ', token^.TokenName, ' -> ', token^.TokenVal);
+  //WriteLn('#TOKEN: ', token^.TokenName, ' -> ', token^.TokenVal);
 
   i := Length(self.FTokenList);
   SetLength(self.FTokenList, i + 1);
@@ -443,6 +417,7 @@ begin
         else if curCodePoint = #13 then
         begin
             (* Ignore cariage return *)
+            self.FCurChar := 0;
         end
         else
         begin
@@ -457,14 +432,11 @@ begin
         if not self.FDfa.nextChar(curCodePoint, reprocessCodePoint) then
         begin
             WriteLn('Error: no debugging info yet.');
+            WriteLn(#9, 'Line: ', self.FCurLine, ', Char: ', self.FCurChar, ', => ', curCodePoint);
         end;
 
         if not reprocessCodePoint then
-            Inc(curP, len)
-        else
-        begin
-
-        end;
+            Inc(curP, len);
     end;
 
     Result := self.FTokenList;

@@ -8,12 +8,12 @@ uses Classes, SysUtils;
 
 type
     PDFAToken = ^TDFAToken;
-    TDFAToken = record
+    TDFAToken = packed record
         TokenId : Integer;
-        TokenVal : AnsiString;
         TokenName: AnsiString;
-        TokenCharStart : Integer;
-        TokenLine : Integer;
+        TokenVal : AnsiString;
+        TokenLine : Cardinal;
+        TokenCharStart : Cardinal;
     end;
 
     TDFATokenArray = Array of TDFAToken;

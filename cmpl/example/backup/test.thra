@@ -3,7 +3,7 @@ program helloworld;
 /* 
     Delphi or Pascal Inspired Language infused with goodness 
     which compiles to plain C89 or C99 not sure yet. Important
-	that it will also compile to LLVM IL too
+    that it will also compile to LLVM IL too
     
     Case-Sensitive
     Not OOP (at the moment)
@@ -46,7 +46,7 @@ program helloworld;
 /*
 	Allocation
 	
-	There are a few simple Allocations. First recognizing therre are
+	There are a few simple Allocations. First recognizing there are
 	only 2 main locations for allocation. The HEAP and the STACK. However
 	in some situations we can consider using a Buffer in the Program's
 	Data Segment (ASM, or C Global Variable) for much faster access,
@@ -57,7 +57,7 @@ program helloworld;
         which holds 5 Contiguous User Records.
 		
 	    var users : ^[]User;
-	    #alloc(users, 5);
+	    alloc(users, 5);
 
         Stack Allocated Array
 
@@ -90,34 +90,38 @@ type Vector<SIZE_T : Uint8, TYPE_T : Type> : Record (
     el : [SIZE_T]TYPE_T;
 );
 
-
-
-
 func proc_name(arg1 : String) {
+    var tmp_vec : Vector<3, Float32>; // Stored local in stack-frame
 
+    // A Pointer to a Vector<3, Float32> which needs to to still be allocated or
+    // set to point an existing value in the heap. There is also a special
+    // "Buffered" storage space.
+    var player_pos : ^Vector<3, Float32>;
 };
 
 
-/*	[@...]
-	this is a meta programming decorator and is executed during compilation,
-	and should do any needed setup, code manipulation, or generation needed
-	to make the function act as expected (this can even include RTTI additions)
+/*
+    [@...]
+    this is a meta programming decorator and is executed during compilation,
+    and should do any needed setup, code manipulation, or generation needed
+    to make the function act as expected (this can even include RTTI additions)
 */
 [@protocom.rpc()] 
 func func_name(arg1 : String; arg2 : Int32) : String {
-	var my_var : String := '',
-	    int_var : Int32 := 0;
-		
-	func sub_func_name() {
-		/*	this is a sub procedure which is not exactly a closure and doesn't capture
-			the variables of the parent, however, it does allow access to them in the
-			parent's stack frame.
-			
-			Sub procedures are recursive, meaning we will need to track the location of
-			the parent procedure stackframe
-		*/
-		var my_local_var : Bool = FALSE;
-	};
+    var my_var : String := "",
+        int_var : Int32 := 0;
+
+    func sub_func_name() {
+            /*
+                this is a sub procedure which is not exactly a closure and doesn't capture
+		the variables of the parent, however, it does allow access to them in the
+		parent's stack frame.
+
+		Sub procedures are recursive, meaning we will need to track the location of
+		the parent procedure stackframe
+	    */
+            var my_local_var : Bool = FALSE;
+    };
     
     // Loops
     for (var i : Int32 := 0; i < 100; #inc(i)) {

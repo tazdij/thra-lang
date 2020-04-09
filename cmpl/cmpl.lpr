@@ -6,7 +6,7 @@ uses
   {$IFDEF UNIX}{$IFDEF UseCThreads}
   cthreads,
   {$ENDIF}{$ENDIF}
-  SysUtils, StrUtils, chardfa, bingen, lexdfa, thralex, vm;
+  SysUtils, StrUtils, chardfa, bingen, lexdfa, thralex, vm, lexanalyzer, thrastructs;
 
 function ReadTextFile(path : AnsiString) : AnsiString;
 var
@@ -32,33 +32,37 @@ end;
 
 var
     lexer : TLexer;
+    lanalyzer : TLexAnalyzer;
     src : AnsiString;
     tokens : TLexTokenArray;
     //parser : TLfnwParseGen;
 
-    outBytes : TBytes;
+    //outBytes : TBytes;
 
-    testInt : Integer;
-    testBytes : Array[0..3] of Byte;
+    //testInt : Integer;
+    //testBytes : Array[0..3] of Byte;
 
 begin
 
   lexer := TLexer.Create();
+  lanalyzer := TLexAnalyzer.Create();
   //parser := TLfnwParseGen.Create();
 
   src := ReadTextFile(ParamStr(1));
   WriteLn('File: ', ParamStr(1));
-  WriteLn(src);
+  //WriteLn(src);
 
   tokens := lexer.Lex(src);
 
-
+  lanalyzer.ProcessTokens(tokens);
   //parser.Run(tokens);
 
 
   FreeAndNil(lexer);
+  FreeAndNil(lanalyzer);
   //FreeAndNil(parser);
   src := '';
+  SetLength(tokens, 0);
 
 end.
 

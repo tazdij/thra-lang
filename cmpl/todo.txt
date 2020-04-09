@@ -1,3 +1,24 @@
 
+## Lexing Lang Features and Lex Feature
+[x] Build a Double Buffer for Lexing
+  [x] Create a second LimboBuffer in CharDFA for characters we might want to keep
+[x] Lex Pointer Carat
+[x] Lex Address AT Symbol
+[x] Lex L & R Brackets
+[x] Fix MACRO picking up lparen
 
-[ ] Build a Double Buffer for Lexing
+## Speedup and issues
+[ ] Create a Allocation Chunk for the Lex Token Array
+  [ ] Increment Buffer by Chunk Size when needed
+  [ ] Track the Count of Tokens in the Buffer
+[ ] Character count is Off by a few in ThraLex with CharDFA
+
+
+
+
+
+## Post Lexer Token Cleanup
+[ ]
+
+
+
