@@ -4,17 +4,12 @@ unit chardfa;
 
 interface
 
-uses Classes, SysUtils;
+uses Classes, SysUtils, thrastructs;
 
 type
-    PDFAToken = ^TDFAToken;
-    TDFAToken = record
-        TokenId : Integer;
-        TokenVal : AnsiString;
-        TokenName: AnsiString;
-        TokenCharStart : Integer;
-        TokenLine : Integer;
-    end;
+    PDFAToken = PLexToken;
+    TDFAToken = TLexToken;
+
 
     TDFATokenHandler = procedure(ADfaToken : PDFAToken) of object;
 
@@ -157,7 +152,7 @@ type
             
             procedure AddState(state : TDFAState);
             procedure SetTokenHandler(handler : TDFATokenHandler);
-            function nextChar(c : AnsiString; var reprocess : Boolean) : Boolean;
+            function nextChar(c : AnsiString; pToken : PDFAToken; var reprocess : Boolean; var tokenComplete : Boolean) : Boolean;
     end;
 
 implementation
@@ -591,10 +586,17 @@ begin
     self.FTokenHandler := handler;
 end;
 
-function TCharDFA.nextChar(c : AnsiString; var reprocess : Boolean) : Boolean;
-var
-    pToken : PDFAToken;
+(*
+  nextChar
+  Take a character to process, and a pointer to load the token into when we are
+  done with a token.
+
+
+
+*)
+function TCharDFA.nextChar(c : AnsiString; pToken : PDFAToken; var reprocess : Boolean; var tokenComplete : Boolean) : Boolean;
 begin
+    tokenComplete := False;
 
     (* Test each Delta in the current state, if it can process this char *)
     Result := FCurState.ProcessChar(c, reprocess);
@@ -605,15 +607,17 @@ begin
         if self.FCurState.IsLeaf then
         begin
             (* This is a dead end, it is time to generate a token, clear buffer, and got to StartState *)
-            New(pToken);
+            //New(pToken);
 
-            pToken^.TokenName := self.FCurState.FName;
-            pToken^.TokenId := self.FCurState.FTokenId;
-            pToken^.TokenVal := Copy(self.FBuffer, 1, Length(self.FBuffer));
+            pToken^.Name := self.FCurState.FName;
+            pToken^.TokenType := ELexTokenType(self.FCurState.FTokenId);
+            pToken^.LexValue := Copy(self.FBuffer, 1, Length(self.FBuffer));
 
             self.FTokenHandler(pToken);
 
-            Dispose(pToken);
+            //Dispose(pToken);
+
+            tokenComplete := True;
 
             self.FBuffer := '';
 

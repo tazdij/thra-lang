@@ -62,7 +62,5 @@ begin
   FreeAndNil(lanalyzer);
   //FreeAndNil(parser);
   src := '';
-  SetLength(tokens, 0);
-
 end.
 

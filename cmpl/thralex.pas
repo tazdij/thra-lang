@@ -14,6 +14,7 @@ type
             FDfa : TCharDFA;
             FCurChar, FCurLine: Cardinal;
             FTokenList : TLexTokenArray;
+            FTokenCount : Cardinal;
         public
             constructor Create();
             destructor Destroy(); Override;
@@ -70,6 +71,8 @@ var
 
     IdentCLs : Array[0..1] of TDFAComparator;
 
+const
+    BUFFER_CHUNK_SIZE = 100;
 
 constructor TLexer.Create();
 var
@@ -120,6 +123,7 @@ var
 begin
     self.FCurLine := 1;
     self.FCurChar := 0;
+    self.FTokenCount := 0;
     SetLength(self.FTokenList, 0);
 
     FDfa := TCharDFA.Create();
@@ -319,8 +323,6 @@ begin
     StartState.AddDelta(TDFADelta.Create(TDFAComp_Is.Create('>'), GreaterThanState, False));
 
 
-
-
     (* Handle IdentStart *)
     StartState.AddDelta(TDFADelta.Create(TDFAComp_IsIn.Create(IdentStartCL), IdentState));
     IdentState.AddDelta(TDFADelta.Create(TDFAComp_IsIn.Create(IdentStartCL), IdentState));
@@ -383,13 +385,13 @@ var pToken : PLexToken;
 begin
   //WriteLn('#TOKEN: ', token^.TokenName, ' -> ', token^.TokenVal);
 
-  i := Length(self.FTokenList);
-  SetLength(self.FTokenList, i + 1);
-  pToken := @self.FTokenList[i];
+  //i := Length(self.FTokenList);
+  //SetLength(self.FTokenList, i + 1);
+  //pToken := @self.FTokenList[i];
 
-  pToken^.LexValue := token^.TokenVal;
-  pToken^.TokenType := ELexTokenType(token^.TokenId);
-  pToken^.Name := token^.TokenName;
+  //pToken^.LexValue := token^.TokenVal;
+  //pToken^.TokenType := ELexTokenType(token^.TokenId);
+  //pToken^.Name := token^.TokenName;
 
 end;
 
@@ -399,9 +401,14 @@ var
     curCodePoint : AnsiString;
     curP, endP : PChar;
     reprocessCodePoint : Boolean;
+    tokenComplete : Boolean;
+    curToken : PLexToken;
 begin
     curP := PChar(s);
     endP := curP + Length(s);
+
+    SetLength(self.FTokenList, BUFFER_CHUNK_SIZE);
+    curToken := @self.FTokenList[0];
     
     while curP < endP do
     begin
@@ -429,7 +436,7 @@ begin
         reprocessCodePoint := False;
         
         (* Pass char into dfa state *)
-        if not self.FDfa.nextChar(curCodePoint, reprocessCodePoint) then
+        if not self.FDfa.nextChar(curCodePoint, curToken, reprocessCodePoint, tokenComplete) then
         begin
             WriteLn('Error: no debugging info yet.');
             WriteLn(#9, 'Line: ', self.FCurLine, ', Char: ', self.FCurChar, ', => ', curCodePoint);
@@ -437,7 +444,26 @@ begin
 
         if not reprocessCodePoint then
             Inc(curP, len);
+
+        if tokenComplete then
+        begin
+            // The Token was completed, we need to move to the next, and increment
+            // the token list, realloc if needed, adding chunk size
+            Inc(self.FTokenCount);
+
+            if self.FTokenCount = Length(self.FTokenList) then
+            begin
+                // We are out of space in the list, resize
+                SetLength(self.FTokenList, Length(self.FTokenList) + BUFFER_CHUNK_SIZE);
+            end;
+
+            // move curToken to point to the next empty element
+            curToken := @self.FTokenList[self.FTokenCount];
+        end;
     end;
+
+    if self.FTokenCount > 0 then
+        SetLength(self.FTokenList, self.FTokenCount);
 
     Result := self.FTokenList;
 
