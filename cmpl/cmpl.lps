@@ -7,8 +7,8 @@
       <Unit0>
         <Filename Value="cmpl.lpr"/>
         <IsPartOfProject Value="True"/>
-        <TopLine Value="35"/>
-        <CursorPos X="13" Y="64"/>
+        <TopLine Value="18"/>
+        <CursorPos X="21" Y="35"/>
         <UsageCount Value="246"/>
         <Loaded Value="True"/>
       </Unit0>
@@ -16,7 +16,7 @@
         <Filename Value="chardfa.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="7"/>
-        <TopLine Value="585"/>
+        <TopLine Value="507"/>
         <CursorPos X="35" Y="620"/>
         <UsageCount Value="246"/>
         <Loaded Value="True"/>
@@ -103,17 +103,18 @@
         <Filename Value="thralex.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="4"/>
-        <TopLine Value="442"/>
-        <CursorPos X="85" Y="452"/>
+        <TopLine Value="58"/>
+        <CursorPos X="5" Y="74"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit11>
       <Unit12>
         <Filename Value="example/test.thra"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="5"/>
-        <TopLine Value="113"/>
-        <CursorPos X="13" Y="134"/>
+        <TopLine Value="85"/>
+        <CursorPos X="98" Y="97"/>
         <UsageCount Value="254"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
@@ -131,7 +132,7 @@
         <Filename Value="example/thra_1.thra"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="9"/>
-        <CursorPos X="5" Y="14"/>
+        <CursorPos X="14" Y="29"/>
         <UsageCount Value="231"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
@@ -149,7 +150,7 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="3"/>
         <CursorPos X="43" Y="7"/>
-        <UsageCount Value="46"/>
+        <UsageCount Value="67"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit16>
@@ -157,19 +158,18 @@
         <Filename Value="lexanalyzer.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="9"/>
-        <CursorPos X="91" Y="46"/>
-        <UsageCount Value="46"/>
+        <TopLine Value="11"/>
+        <CursorPos X="15" Y="26"/>
+        <UsageCount Value="67"/>
         <Loaded Value="True"/>
       </Unit17>
       <Unit18>
         <Filename Value="thrastructs.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
-        <TopLine Value="36"/>
-        <CursorPos X="29" Y="65"/>
-        <UsageCount Value="26"/>
+        <TopLine Value="85"/>
+        <CursorPos X="29" Y="115"/>
+        <UsageCount Value="47"/>
         <Loaded Value="True"/>
       </Unit18>
       <Unit19>
@@ -177,141 +177,141 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="233"/>
         <CursorPos X="18" Y="246"/>
-        <UsageCount Value="218"/>
+        <UsageCount Value="216"/>
       </Unit19>
       <Unit20>
         <Filename Value="booty.pas"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="32" Y="9"/>
-        <UsageCount Value="181"/>
+        <UsageCount Value="179"/>
       </Unit20>
       <Unit21>
         <Filename Value="thrastucts.pas"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="41" Y="4"/>
-        <UsageCount Value="29"/>
+        <UsageCount Value="27"/>
       </Unit21>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="thralex.pas"/>
-        <Caret Line="99" Column="9" TopLine="71"/>
+        <Filename Value="chardfa.pas"/>
+        <Caret Line="118" Column="43" TopLine="94"/>
       </Position1>
       <Position2>
         <Filename Value="thralex.pas"/>
-        <Caret Line="258" Column="32" TopLine="230"/>
+        <Caret Line="394" Column="92" TopLine="367"/>
       </Position2>
       <Position3>
         <Filename Value="thralex.pas"/>
-        <Caret Line="310" Column="95" TopLine="292"/>
+        <Caret Line="340" Column="83" TopLine="316"/>
       </Position3>
       <Position4>
-        <Filename Value="chardfa.pas"/>
-        <Caret Line="128" Column="27" TopLine="115"/>
+        <Filename Value="thralex.pas"/>
+        <Caret Line="485" Column="25" TopLine="458"/>
       </Position4>
       <Position5>
-        <Filename Value="chardfa.pas"/>
-        <Caret Line="113" Column="28" TopLine="98"/>
+        <Filename Value="example/thra_0.thra"/>
+        <Caret Line="17" Column="37"/>
       </Position5>
       <Position6>
-        <Filename Value="chardfa.pas"/>
-        <Caret Line="432" Column="15" TopLine="420"/>
+        <Filename Value="lexanalyzer.pas"/>
+        <Caret Line="29" Column="3"/>
       </Position6>
       <Position7>
-        <Filename Value="chardfa.pas"/>
-        <Caret Line="113" Column="26" TopLine="101"/>
+        <Filename Value="cmpl.lpr"/>
+        <Caret Line="9" Column="72"/>
       </Position7>
       <Position8>
-        <Filename Value="chardfa.pas"/>
-        <Caret Line="489" Column="40" TopLine="474"/>
+        <Filename Value="lexanalyzer.pas"/>
+        <Caret Line="45" Column="5" TopLine="14"/>
       </Position8>
       <Position9>
-        <Filename Value="chardfa.pas"/>
-        <Caret Line="118" Column="43" TopLine="94"/>
+        <Filename Value="lexanalyzer.pas"/>
+        <Caret Line="46" Column="13" TopLine="19"/>
       </Position9>
       <Position10>
-        <Filename Value="thralex.pas"/>
-        <Caret Line="394" Column="92" TopLine="367"/>
+        <Filename Value="cmpl.lpr"/>
+        <Caret Line="57" Column="34" TopLine="35"/>
       </Position10>
       <Position11>
         <Filename Value="thralex.pas"/>
-        <Caret Line="340" Column="83" TopLine="316"/>
+        <Caret Line="490" Column="27" TopLine="468"/>
       </Position11>
       <Position12>
         <Filename Value="thralex.pas"/>
-        <Caret Line="485" Column="25" TopLine="458"/>
+        <Caret Line="21" Column="30"/>
       </Position12>
       <Position13>
-        <Filename Value="example/thra_0.thra"/>
-        <Caret Line="17" Column="37"/>
+        <Filename Value="lexanalyzer.pas"/>
+        <Caret Line="8" Column="35"/>
       </Position13>
       <Position14>
-        <Filename Value="lexanalyzer.pas"/>
-        <Caret Line="29" Column="3"/>
+        <Filename Value="parser.pas"/>
+        <Caret Line="474" Column="34" TopLine="469"/>
       </Position14>
       <Position15>
-        <Filename Value="cmpl.lpr"/>
-        <Caret Line="9" Column="72"/>
+        <Filename Value="lexdfa.pas"/>
+        <Caret Line="189" Column="26" TopLine="169"/>
       </Position15>
       <Position16>
         <Filename Value="lexanalyzer.pas"/>
-        <Caret Line="45" Column="5" TopLine="14"/>
+        <Caret Line="46" Column="45" TopLine="21"/>
       </Position16>
       <Position17>
-        <Filename Value="lexanalyzer.pas"/>
-        <Caret Line="46" Column="13" TopLine="19"/>
-      </Position17>
-      <Position18>
-        <Filename Value="cmpl.lpr"/>
-        <Caret Line="57" Column="34" TopLine="35"/>
-      </Position18>
-      <Position19>
-        <Filename Value="thralex.pas"/>
-        <Caret Line="490" Column="27" TopLine="468"/>
-      </Position19>
-      <Position20>
-        <Filename Value="thralex.pas"/>
-        <Caret Line="21" Column="30"/>
-      </Position20>
-      <Position21>
-        <Filename Value="lexanalyzer.pas"/>
-        <Caret Line="8" Column="35"/>
-      </Position21>
-      <Position22>
-        <Filename Value="parser.pas"/>
-        <Caret Line="474" Column="34" TopLine="469"/>
-      </Position22>
-      <Position23>
-        <Filename Value="lexdfa.pas"/>
-        <Caret Line="189" Column="26" TopLine="169"/>
-      </Position23>
-      <Position24>
-        <Filename Value="lexanalyzer.pas"/>
-        <Caret Line="46" Column="45" TopLine="21"/>
-      </Position24>
-      <Position25>
         <Filename Value="chardfa.pas"/>
         <Caret Line="11" Column="26"/>
-      </Position25>
-      <Position26>
+      </Position17>
+      <Position18>
         <Filename Value="chardfa.pas"/>
         <Caret Line="608" Column="31" TopLine="589"/>
-      </Position26>
-      <Position27>
+      </Position18>
+      <Position19>
         <Filename Value="chardfa.pas"/>
         <Caret Line="606" Column="72" TopLine="591"/>
-      </Position27>
-      <Position28>
+      </Position19>
+      <Position20>
         <Filename Value="chardfa.pas"/>
         <Caret Line="615" Column="29" TopLine="593"/>
-      </Position28>
-      <Position29>
+      </Position20>
+      <Position21>
         <Filename Value="thralex.pas"/>
         <Caret Line="461" Column="59" TopLine="434"/>
+      </Position21>
+      <Position22>
+        <Filename Value="thralex.pas"/>
+        <Caret Line="411" Column="24" TopLine="395"/>
+      </Position22>
+      <Position23>
+        <Filename Value="thrastructs.pas"/>
+        <Caret Line="78" Column="41" TopLine="62"/>
+      </Position23>
+      <Position24>
+        <Filename Value="thrastructs.pas"/>
+        <Caret Line="89" Column="54" TopLine="61"/>
+      </Position24>
+      <Position25>
+        <Filename Value="cmpl.lpr"/>
+        <Caret Line="57" Column="9" TopLine="37"/>
+      </Position25>
+      <Position26>
+        <Filename Value="cmpl.lpr"/>
+        <Caret Line="35" Column="21" TopLine="18"/>
+      </Position26>
+      <Position27>
+        <Filename Value="lexanalyzer.pas"/>
+        <Caret Line="43" Column="40" TopLine="22"/>
+      </Position27>
+      <Position28>
+        <Filename Value="lexanalyzer.pas"/>
+        <Caret Line="38" Column="72" TopLine="17"/>
+      </Position28>
+      <Position29>
+        <Filename Value="lexanalyzer.pas"/>
+        <Caret Line="51" Column="24" TopLine="22"/>
       </Position29>
       <Position30>
         <Filename Value="thralex.pas"/>
-        <Caret Line="411" Column="24" TopLine="395"/>
+        <Caret Line="457" Column="76" TopLine="442"/>
       </Position30>
     </JumpHistory>
     <RunParams>

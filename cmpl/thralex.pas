@@ -71,8 +71,6 @@ var
 
     IdentCLs : Array[0..1] of TDFAComparator;
 
-const
-    BUFFER_CHUNK_SIZE = 100;
 
 constructor TLexer.Create();
 var

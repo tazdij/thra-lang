@@ -20,7 +20,7 @@ type
       constructor Create();
       destructor Destroy(); override;
 
-      function ProcessTokens(ATokens : TLexTokenArray) : Boolean;
+      function ProcessTokens(ATokens : TLexTokenArray) : TLexTokenArray;
   end;
 
 implementation
@@ -35,16 +35,20 @@ begin
 
 end;
 
-function TLexAnalyzer.ProcessTokens(ATokens : TLexTokenArray) : Boolean;
+function TLexAnalyzer.ProcessTokens(ATokens : TLexTokenArray) : TLexTokenArray;
 var curToken : PLexToken;
     i : Integer;
 begin
+
+  SetLength(Result, BUFFER_CHUNK_SIZE);
 
   for i := 0 to Length(ATokens) - 1 do
   begin
     curToken := @ATokens[i];
     WriteLn('ANALYZE TOKEN: Name: ', (* SizeOf(curToken^.TokenType) *) curToken^.Name, ' => ', curToken^.LexValue);
   end;
+
+  SetLength(Result, 0);
 
 end;
 

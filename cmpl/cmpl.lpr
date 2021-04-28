@@ -57,6 +57,10 @@ begin
   lanalyzer.ProcessTokens(tokens);
   //parser.Run(tokens);
 
+  WriteLn('');
+  WriteLn('### Compilation Completed. ###');
+  WriteLn('Press Enter To Quit.');
+  ReadLn();
 
   FreeAndNil(lexer);
   FreeAndNil(lanalyzer);

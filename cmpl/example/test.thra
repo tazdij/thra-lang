@@ -16,62 +16,65 @@ program helloworld;
 
 
 /*
-        Functions can be declared prior to their definition
-	this however is only possible in Units and not in the
-	Program file.
-	
-	It looks something like this:
-	
-	    func proc_name(arg1 : String);
-	
-	We want to also be able to define External functions.
+    Functions can be declared prior to their definition
+    this however is only possible in Units and not in the
+    Program file.
 
-            func internal_name(arg1 : Int32) : Int32; cdecl; extern 'external_name';
-	
+    It looks something like this:
+
+	func proc_name(arg1 : String);
+
+    We want to also be able to define External functions.
+
+        func internal_name(arg1 : Int32) : Int32; cdecl; extern 'external_name';
 */
 
 /*
-	Pointers & Low level memory access
-	A Raw Pointer works just like in C and Pascal.
-	
-	    var my_user_ptr : ^User;
-	
-	Now Pointers to Functions are also similar to C and Pascal
-	
-	    var my_callback_ptr : func(Int32; String) : Bool;
-	
-	In the Future Fat Pointers to Methods (when/if OOP is added)
+    Pointers & Low level memory access
+    A Raw Pointer works just like in C and Pascal.
+
+	var my_user_ptr : ^User;
+
+    Now Pointers to Functions are also similar to C and Pascal
+
+	var my_callback_ptr : func(Int32; String) : Bool;
+
+    In the Future Fat Pointers to Methods (when/if OOP is added)
 */
 
 /*
-	Allocation
-	
-	There are a few simple Allocations. First recognizing there are
-	only 2 main locations for allocation. The HEAP and the STACK. However
-	in some situations we can consider using a Buffer in the Program's
-	Data Segment (ASM, or C Global Variable) for much faster access,
-	if needed.
-	
-	Allocation of memory on the Heap is similar to C, with simpler syntax.
-        In the following example, users is a Pointer to Heap allocated memory
-        which holds 5 Contiguous User Records.
-		
-	    var users : ^[]User;
-	    alloc(users, 5);
+    Allocation
 
-        Stack Allocated Array
+    There are a few simple Allocations. First recognizing there are
+    only 2 main locations for allocation. The HEAP and the STACK. However
+    in some situations we can consider using a Buffer in the Program's
+    Data Segment (ASM, or C Global Variable) for much faster access,
+    if needed.
 
-            var entities : [10]Entity;
+    Allocation of memory on the Heap is similar to C, with simpler syntax.
+    In the following example, users is a Pointer to Heap allocated memory
+    which holds 5 Contiguous User Records.
 
-        This is automatically allocated to the stack, in the current frame if
-        declared in a function. If this is in a Recird, the elements will be
-        directly in the Record
+	var users : ^[]User;
+	alloc(users, 5);
 
-            type Cluster : Record (
-                elements : [10]Element;
-            );
+        -- OR --
 
+        type UserArray = ^[]User;
+        var users : UserArray;
+        alloc(users, 5);
 
+    Stack Allocated Array
+
+        var entities : [10]Entity;
+
+    This is automatically allocated to the stack, in the current frame if
+    declared in a function. If this is in a Recird, the elements will be
+    directly in the Record
+
+        type Cluster : Record (
+            elements : [10]Element;
+        );
 */
 
 type User : Record (
@@ -99,6 +102,10 @@ func proc_name(arg1 : String) {
     var player_pos : ^Vector<3, Float32>;
 };
 
+func vector_add(vec1, vec2 : Vector<SIZE_T : Uint8, TYPE_T : Type>) : Vector<SIZE_T : Uint8, TYPE_T : Type> {
+
+}
+
 
 /*
     [@...]
@@ -112,15 +119,15 @@ func func_name(arg1 : String; arg2 : Int32) : String {
         int_var : Int32 := 0;
 
     func sub_func_name() {
-            /*
-                this is a sub procedure which is not exactly a closure and doesn't capture
-		the variables of the parent, however, it does allow access to them in the
-		parent's stack frame.
+      /*
+          this is a sub procedure which is not exactly a closure and doesn't capture
+	  the variables of the parent, however, it does allow access to them in the
+	  parent's stack frame.
 
-		Sub procedures are recursive, meaning we will need to track the location of
-		the parent procedure stackframe
-	    */
-            var my_local_var : Bool = FALSE;
+	  Sub procedures are recursive, meaning we will need to track the location of
+	  the parent procedure stackframe
+      */
+      var my_local_var : Bool = FALSE;
     };
     
     // Loops

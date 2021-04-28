@@ -6,7 +6,7 @@ import "gl";
 
 type TokenType : Enum (
     STRING_LIT = 0b0000_0001,
-    DEC_LIT    = 0b0000_0010
+    DEC_LIT    = 0b0000_0010,
 );
 
 type Token : Record (
@@ -23,3 +23,8 @@ func some_function() {
     i := 30;
     f := i / 2;
 };
+
+func main(args : ^[]Cstring) : Int32 {
+
+    return 0;
+}
